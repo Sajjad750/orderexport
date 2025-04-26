@@ -1,0 +1,34 @@
+/* order-summary-export.css */
+.order-export-form {
+    margin-top: 30px;
+    max-width: 600px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 3px;
+    border-color: #ccc;
+    padding: 10px 5px 10px 10px;
+}
+
+.order-export-form label {
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.order-export-description {
+    margin-bottom: 20px;
+    font-style: italic;
+    color: #555;
+}
+
+.order-export-form .form-row-dates {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.order-export-form .form-row-dates .form-field {
+    flex: 1;
+}
+.date-flow{display: flex
+    ;
+        column-gap: 20px;}
