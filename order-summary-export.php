@@ -139,10 +139,27 @@ function generate_csv_report($filters) {
     // Clear any output buffering
     while (ob_get_level()) ob_end_clean();
 
+    $site_name = get_bloginfo('name'); // Get the site name
+    $report_type = 'order-export'; // Static report type
+    $country = !empty($filters['country']) ? $filters['country'] : 'AllCountries'; // Default to 'AllCountries' if not set
+    $state = !empty($filters['state']) ? $filters['state'] : 'AllStates'; // Default to 'AllStates' if not set
+    $start_date = !empty($filters['start_date']) ? date('Y-m-d', strtotime($filters['start_date'])) : ''; // Start date
+    $end_date = !empty($filters['end_date']) ? date('Y-m-d', strtotime($filters['end_date'])) : ''; // End date
+
+        // Format the file name
+    $file_name = sprintf('%s-%s-%s-%s-%s_to_%s.csv', 
+    sanitize_title($site_name), 
+    $report_type, 
+    $country, 
+    $state, 
+    $start_date, 
+    $end_date
+);
+
     // Set headers for CSV download
     header('Content-Description: File Transfer');
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="order-summary-' . date('Ymd-His') . '.csv"');
+    header('Content-Disposition: attachment; filename="' . $file_name . '"');
     header('Expires: 0');
     header('Pragma: public');
 
@@ -150,7 +167,7 @@ function generate_csv_report($filters) {
     if (!$output) wp_die('Unable to open output stream');
 
     // Always write the CSV header
-    fputcsv($output, ['Order ID', 'Date', 'Order Quantity', 'Gross Revenue', 'Refund Total', 'Discounts', 'Net Revenue', 'Tax Collected', 'Coupon Code']);
+    fputcsv($output, ['Order ID', 'Date', 'Order Quantity', 'Gross Revenue', 'Refund Total', 'Discounts', 'Net Revenue', 'Tax Collected', 'Coupon Code' , 'Country' , 'State']);
 
     $limit = 100;
     $page  = 1;
@@ -201,7 +218,9 @@ function generate_csv_report($filters) {
                 $order->get_discount_total(),
                 $order->get_total() - $refund_total - $order->get_discount_total(), // Net revenue
                 $order->get_total_tax(),
-                $coupon_codes
+                $coupon_codes,
+                !empty($filters['country']) ? $order->get_billing_country() : 'All countries', // Country
+                !empty($filters['state']) ? $order->get_billing_state() : 'All states'  // State
             ]);
         }
 
